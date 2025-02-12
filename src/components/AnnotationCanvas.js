@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { fabric } from 'fabric';
-import { FormControlLabel, Switch, Slider, AppBar, Toolbar, Box, Tooltip, IconButton } from '@mui/material';
+import { FormControlLabel, Switch, Slider, AppBar, Toolbar, Box, Tooltip, IconButton, Menu, MenuItem } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import UndoIcon from '@mui/icons-material/Undo';
 import ExportIcon from '@mui/icons-material/GetApp';
 import AutoFixNormalIcon from '@mui/icons-material/AutoFixNormal';
@@ -11,6 +12,7 @@ const AnnotationCanvas = () => {
   const canvasRef = useRef(null);
   const fabricCanvasRef = useRef(null);
   const [brushSize, setBrushSize] = useState(5);
+  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [mode, setMode] = useState('brush'); // 'brush' or 'polygon'
   const [history, setHistory] = useState([]);
 
@@ -146,7 +148,6 @@ const AnnotationCanvas = () => {
     downloadAnchorNode.remove();
   };
 
-
   const [brushColor, setBrushColor] = useState('red');
 
   const handleColorChange = (color) => {
@@ -156,14 +157,12 @@ const AnnotationCanvas = () => {
     }
   };
 
-
   return (
     <>
       <canvas ref={canvasRef} />
 
       <AppBar position="fixed" style={{ top: 0, bottom: 'auto' }}>
         <Toolbar>
-          
           <Tooltip title={`${mode === 'brush' ? 'Switch to Polygon Mode' : 'Switch to Brush Mode'}`}>
             <FormControlLabel
               control={
@@ -196,7 +195,7 @@ const AnnotationCanvas = () => {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box>
+          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <Tooltip title="Eraser">
               <IconButton
                 size="small"
@@ -232,18 +231,46 @@ const AnnotationCanvas = () => {
                 <ExportIcon />
               </IconButton>
             </Tooltip>
-
           </Box>
 
-        </Toolbar>
+          <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+            <Tooltip title="Menu">
+              <IconButton
+                size="small"
+                edge="start"
+                color="inherit"
+                sx={{ mr: 2 }}
+                onClick={(e) => setMenuAnchorEl(e.currentTarget)}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Tooltip>
 
+            <Menu
+              anchorEl={menuAnchorEl}
+              open={Boolean(menuAnchorEl)}
+              onClose={() => setMenuAnchorEl(null)}
+            >
+              <MenuItem onClick={handleEraser}>
+                <AutoFixNormalIcon sx={{ mr: 1 }} />
+                Eraser
+              </MenuItem>
+              <MenuItem onClick={handleUndo}>
+                <UndoIcon sx={{ mr: 1 }} />
+                Undo
+              </MenuItem>
+              <MenuItem onClick={exportToCOCO}>
+                <ExportIcon sx={{ mr: 1 }} />
+                Export
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Toolbar>
       </AppBar>
 
-      <div >
+      <div>
         <HuePicker color={brushColor} onChange={handleColorChange} size="small" />
       </div>
-
-
     </>
   );
 };
