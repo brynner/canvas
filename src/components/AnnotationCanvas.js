@@ -148,7 +148,6 @@ const AnnotationCanvas = () => {
 
 
   const [brushColor, setBrushColor] = useState('red');
-  const [colorPickerVisible, setColorPickerVisible] = useState(false);
 
   const handleColorChange = (color) => {
     setBrushColor(color.hex);
